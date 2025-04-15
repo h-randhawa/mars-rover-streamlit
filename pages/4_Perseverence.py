@@ -102,4 +102,20 @@ if photos:
         with cols[i % 3]:
             st.image(
                 photo["img_src"],
-                caption=f"📷 {photo['camera
+                caption=f"📷 {photo['camera']['full_name']} — Sol {photo['sol']} — {photo['earth_date']}",
+                use_container_width=True
+            )
+else:
+    st.info("No photos found. Try a different date, sol, or camera.")
+
+# ---------------- MISSION INFO ----------------
+with st.expander("ℹ️ Mission Details"):
+    st.markdown(f"""
+    **Rover Name:** Perseverance  
+    **Launch Date:** {launch_date}  
+    **Landing Date:** {landing_date}  
+    **Mission Status:** {status.capitalize()}  
+    **Total Photos Taken:** {total_photos:,}  
+    **Latest Sol Available:** {max_sol}  
+    **Latest Earth Date with Photos:** {max_date}
+    """)
