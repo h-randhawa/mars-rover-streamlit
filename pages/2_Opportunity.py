@@ -28,8 +28,9 @@ def get_photos(rover, sol=None, earth_date=None, camera=None, page=1):
         params["sol"] = sol
     if earth_date is not None:
         params["earth_date"] = earth_date
-    if camera != "ALL":
-        params["camera"] = camera
+    
+    #if camera != "ALL":
+    #    params["camera"] = camera
     response = requests.get(url, params=params)
     return response.json()["photos"]
 
