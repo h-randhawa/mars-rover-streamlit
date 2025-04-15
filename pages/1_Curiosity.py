@@ -74,7 +74,13 @@ else:
     earth_date = st.sidebar.date_input("Earth Date", value=min_date, min_value=min_date, max_value=max_dt)
 
 # ---------------- FETCH & DISPLAY PHOTOS ----------------
-photos = get_photos(ROVER, sol=sol, earth_date=str(earth_date) if earth_date else None, camera=camera, page=page)
+photos = get_photos(
+    ROVER,
+    sol=sol,
+    earth_date=str(earth_date) if earth_date else None,
+    camera=camera,
+    page=st.session_state.curiosity_page
+)
 
 st.subheader(f"🖼️ Results ({len(photos)} photos found on page {page})")
 
