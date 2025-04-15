@@ -4,7 +4,7 @@ from datetime import datetime
 
 # ---------------- CONFIG ----------------
 st.set_page_config(page_title="Curiosity Rover", layout="wide")
-st.title("📸 Curiosity Rover - Mars Photo Explorer")
+st.title("Curiosity Rover - Mars Photo Explorer")
 
 API_KEY = "pPfVq3xyq2m2sXdwqpUed5cvoXiI0z05S5IN6Vci"
 ROVER = "curiosity"
@@ -82,7 +82,7 @@ photos = get_photos(
     page=st.session_state.curiosity_page
 )
 
-st.subheader(f"🖼️ Results ({len(photos)} photos found on page {st.session_state.curiosity_page})")
+st.subheader(f"Results ({len(photos)} photos found on page {st.session_state.curiosity_page})")
 
 if photos:
     cols = st.columns(3)
