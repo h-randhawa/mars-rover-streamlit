@@ -67,7 +67,7 @@ if photos:
     cols = st.columns(3)
     for i, photo in enumerate(photos):
         with cols[i % 3]:
-            st.image(photo["img_src"], caption=f"{photo['camera']['full_name']} - Sol {photo['sol']}", use_column_width=True)
+            st.image(photo["img_src"], caption=f"{photo['camera']['full_name']} - Sol {photo['sol']}", use_container_width=True)
 else:
     st.info("No photos found. Try a different date, sol, or camera.")
 
