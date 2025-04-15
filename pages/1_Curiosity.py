@@ -4,7 +4,8 @@ from datetime import datetime
 
 # ---------------- CONFIG ----------------
 st.set_page_config(page_title="Curiosity Rover", layout="wide")
-st.title("Curiosity Rover - Mars Photo Explorer")
+st.title("🛸 Curiosity Rover - Mars Photo Explorer")
+st.caption("Browse real images taken by NASA's Curiosity rover on the surface of Mars.")
 
 API_KEY = st.secrets["api"]["nasa_key"]
 ROVER = "curiosity"
@@ -54,6 +55,7 @@ if "curiosity_page" not in st.session_state:
 with st.sidebar:
     st.markdown("### 📖 Pagination")
     col1, col2 = st.columns([1, 1])
+    
     with col1:
         if st.button("⬅️ Previous") and st.session_state.curiosity_page > 1:
             st.session_state.curiosity_page -= 1
@@ -62,6 +64,9 @@ with st.sidebar:
             st.session_state.curiosity_page += 1
 
     st.markdown(f"**Current Page:** {st.session_state.curiosity_page}")
+    if st.sidebar.button("🔄 Reset to Page 1"):
+        st.session_state.curiosity_page = 1
+
 
 sol = None
 earth_date = None
@@ -88,7 +93,11 @@ if photos:
     cols = st.columns(3)
     for i, photo in enumerate(photos):
         with cols[i % 3]:
-            st.image(photo["img_src"], caption=f"{photo['camera']['full_name']} - Sol {photo['sol']}", use_container_width=True)
+            st.image(
+            photo["img_src"],
+            caption=f"📷 {photo['camera']['full_name']} — Sol {photo['sol']} — {photo['earth_date']}",
+            use_container_width=True
+            )
 else:
     st.info("No photos found. Try a different date, sol, or camera.")
 
