@@ -2,57 +2,83 @@ import streamlit as st
 import requests
 from datetime import datetime
 
+# ---------------- CONFIG ----------------
 st.set_page_config(page_title="Curiosity Rover", layout="wide")
-st.title("🛸 Curiosity Rover Photos")
+st.title("📸 Curiosity Rover - Mars Photo Explorer")
 
-API_KEY = "DEMO_KEY"
+API_KEY = "pPfVq3xyq2m2sXdwqpUed5cvoXiI0z05S5IN6Vci"
 ROVER = "curiosity"
 
+# ---------------- HELPERS ----------------
+@st.cache_data(show_spinner=False)
 def get_manifest(rover):
     url = f"https://api.nasa.gov/mars-photos/api/v1/manifests/{rover}?api_key={API_KEY}"
-    return requests.get(url).json()["photo_manifest"]
+    response = requests.get(url)
+    return response.json()["photo_manifest"]
 
+@st.cache_data(show_spinner=False)
 def get_photos(rover, sol=None, earth_date=None, camera=None, page=1):
     url = f"https://api.nasa.gov/mars-photos/api/v1/rovers/{rover}/photos"
-    params = {"api_key": API_KEY, "page": page}
-    if sol:
+    params = {
+        "api_key": API_KEY,
+        "page": page
+    }
+    if sol is not None:
         params["sol"] = sol
-    if earth_date:
+    if earth_date is not None:
         params["earth_date"] = earth_date
-    if camera and camera != "ALL":
+    if camera != "ALL":
         params["camera"] = camera
     response = requests.get(url, params=params)
     return response.json()["photos"]
 
+# ---------------- FETCH MANIFEST ----------------
 manifest = get_manifest(ROVER)
+landing_date = manifest['landing_date']
+launch_date = manifest['launch_date']
+status = manifest['status']
+max_sol = manifest['max_sol']
+max_date = manifest['max_date']
+total_photos = manifest['total_photos']
 
-st.sidebar.subheader("Search Options")
-query_type = st.sidebar.radio("Search by", ["Martian Sol", "Earth Date"])
-camera = st.sidebar.selectbox("Camera", ["ALL"] + list({photo["camera"]["name"] for photo in get_photos(ROVER, sol=100)}))
-page = st.sidebar.number_input("Page #", min_value=1, value=1)
+# ---------------- SIDEBAR ----------------
+st.sidebar.header("🔍 Filter Options")
+
+query_type = st.sidebar.radio("Search by:", ["Martian Sol", "Earth Date"])
+camera = st.sidebar.selectbox("Camera", ["ALL", "FHAZ", "RHAZ", "MAST", "CHEMCAM", "MAHLI", "MARDI", "NAVCAM"])
+page = st.sidebar.number_input("Page number", min_value=1, value=1)
+
+sol = None
+earth_date = None
 
 if query_type == "Martian Sol":
-    sol = st.sidebar.slider("Sol", 0, manifest["max_sol"])
-    photos = get_photos(ROVER, sol=sol, camera=camera, page=page)
+    sol = st.sidebar.slider("Martian Sol", 0, max_sol, 1000)
 else:
-    min_date = datetime.strptime(manifest["landing_date"], "%Y-%m-%d").date()
-    max_date = datetime.strptime(manifest["max_date"], "%Y-%m-%d").date()
-    earth_date = st.sidebar.date_input("Earth Date", min_value=min_date, max_value=max_date)
-    photos = get_photos(ROVER, earth_date=earth_date, camera=camera, page=page)
+    min_date = datetime.strptime(landing_date, "%Y-%m-%d").date()
+    max_dt = datetime.strptime(max_date, "%Y-%m-%d").date()
+    earth_date = st.sidebar.date_input("Earth Date", value=min_date, min_value=min_date, max_value=max_dt)
 
-st.subheader("Photos")
+# ---------------- FETCH & DISPLAY PHOTOS ----------------
+photos = get_photos(ROVER, sol=sol, earth_date=str(earth_date) if earth_date else None, camera=camera, page=page)
+
+st.subheader(f"🖼️ Results ({len(photos)} photos found on page {page})")
 
 if photos:
     cols = st.columns(3)
     for i, photo in enumerate(photos):
         with cols[i % 3]:
-            st.image(photo["img_src"], caption=f'{photo["camera"]["full_name"]} - Sol {photo["sol"]}', use_column_width=True)
+            st.image(photo["img_src"], caption=f"{photo['camera']['full_name']} - Sol {photo['sol']}", use_column_width=True)
 else:
-    st.warning("No photos found for this selection.")
+    st.info("No photos found. Try a different date, sol, or camera.")
 
-st.markdown(f"""
-**Launch Date**: {manifest['launch_date']}  
-**Landing Date**: {manifest['landing_date']}  
-**Status**: {manifest['status'].capitalize()}  
-**Total Photos**: {manifest['total_photos']}  
-""")
+# ---------------- MISSION INFO ----------------
+with st.expander("ℹ️ Mission Details"):
+    st.markdown(f"""
+    **Rover Name:** Curiosity  
+    **Launch Date:** {launch_date}  
+    **Landing Date:** {landing_date}  
+    **Mission Status:** {status.capitalize()}  
+    **Total Photos Taken:** {total_photos:,}  
+    **Latest Sol Available:** {max_sol}  
+    **Latest Earth Date with Photos:** {max_date}
+    """)
