@@ -6,7 +6,7 @@ from datetime import datetime
 st.set_page_config(page_title="Curiosity Rover", layout="wide")
 st.title("Curiosity Rover - Mars Photo Explorer")
 
-API_KEY = "pPfVq3xyq2m2sXdwqpUed5cvoXiI0z05S5IN6Vci"
+API_KEY = st.secrets["api"]["nasa_key"]
 ROVER = "curiosity"
 
 # ---------------- HELPERS ----------------
