@@ -1,1 +1,4 @@
 .streamlit/secrets.toml
+pages/2_Opportunity.py
+pages/3_Spirit.py
+pages/4_Perseverence.py
