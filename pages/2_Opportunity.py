@@ -46,7 +46,7 @@ total_photos = manifest['total_photos']
 st.sidebar.header("🔍 Filter Options")
 
 query_type = st.sidebar.radio("Search by:", ["Martian Sol", "Earth Date"])
-camera = st.sidebar.selectbox("Camera", ["ALL", "FHAZ", "RHAZ", "MAST", "CHEMCAM", "MAHLI", "MARDI", "NAVCAM"])
+camera = st.sidebar.selectbox("Camera", ["ALL", "FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"])
 # Initialize page number in session state
 if "opportunity_page" not in st.session_state:
     st.session_state.opportunity_page = 1
