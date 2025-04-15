@@ -46,7 +46,9 @@ total_photos = manifest['total_photos']
 st.sidebar.header("🔍 Filter Options")
 
 query_type = st.sidebar.radio("Search by:", ["Martian Sol", "Earth Date"])
+# ✅ Correct camera list for Opportunity
 camera = st.sidebar.selectbox("Camera", ["ALL", "FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"])
+
 # Initialize page number in session state
 if "opportunity_page" not in st.session_state:
     st.session_state.opportunity_page = 1
@@ -55,24 +57,22 @@ if "opportunity_page" not in st.session_state:
 with st.sidebar:
     st.markdown("### 📖 Pagination")
     col1, col2 = st.columns([1, 1])
-    
     with col1:
         if st.button("⬅️ Previous") and st.session_state.opportunity_page > 1:
             st.session_state.opportunity_page -= 1
     with col2:
         if st.button("Next ➡️"):
             st.session_state.opportunity_page += 1
-
     st.markdown(f"**Current Page:** {st.session_state.opportunity_page}")
     if st.sidebar.button("🔄 Reset to Page 1"):
         st.session_state.opportunity_page = 1
-
 
 sol = None
 earth_date = None
 
 if query_type == "Martian Sol":
-    sol = st.sidebar.slider("Martian Sol", 0, max_sol, 1000)
+    # ✅ Improved default sol value (Sol 100 is more likely to have photos)
+    sol = st.sidebar.slider("Martian Sol", 0, max_sol, 100)
 else:
     min_date = datetime.strptime(landing_date, "%Y-%m-%d").date()
     max_dt = datetime.strptime(max_date, "%Y-%m-%d").date()
@@ -94,9 +94,9 @@ if photos:
     for i, photo in enumerate(photos):
         with cols[i % 3]:
             st.image(
-            photo["img_src"],
-            caption=f"📷 {photo['camera']['full_name']} — Sol {photo['sol']} — {photo['earth_date']}",
-            use_container_width=True
+                photo["img_src"],
+                caption=f"📷 {photo['camera']['full_name']} — Sol {photo['sol']} — {photo['earth_date']}",
+                use_container_width=True
             )
 else:
     st.info("No photos found. Try a different date, sol, or camera.")
