@@ -1,8 +1,8 @@
 import streamlit as st
 
-st.image("https://mars.nasa.gov/system/news_items/main_images/9447_PIA25681-320.jpg", use_container_width=True)
-
 st.set_page_config(page_title="Mars Rover Explorer", layout="wide")
+
+st.image("https://mars.nasa.gov/system/news_items/main_images/9447_PIA25681-320.jpg", use_container_width=True)
 
 st.title("🚀 Mars Rover Photo Explorer")
 st.markdown("""
