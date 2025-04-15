@@ -82,7 +82,7 @@ photos = get_photos(
     page=st.session_state.curiosity_page
 )
 
-st.subheader(f"🖼️ Results ({len(photos)} photos found on page {page})")
+st.subheader(f"🖼️ Results ({len(photos)} photos found on page {st.session_state.curiosity_page})")
 
 if photos:
     cols = st.columns(3)
