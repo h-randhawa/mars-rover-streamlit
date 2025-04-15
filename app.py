@@ -1,44 +1,83 @@
 import streamlit as st
+import requests
+import random
 
-# Set page config FIRST
+# ----------------------------------
+# SET PAGE CONFIG FIRST
+# ----------------------------------
 st.set_page_config(
     page_title="Mars Rover Explorer",
     layout="wide",
     page_icon="🚀"
 )
 
-# Banner image
-st.image("https://mars.nasa.gov/layout/mars2020/images/PIA25681-FigureA-web.jpg", use_container_width=True)
+# ----------------------------------
+# API KEY FROM SECRETS
+# ----------------------------------
+API_KEY = st.secrets["api"]["nasa_key"] if "api" in st.secrets else "DEMO_KEY"
+ROVER = "curiosity"
 
-# Title & Intro
+# ----------------------------------
+# API CALLS
+# ----------------------------------
+@st.cache_data
+def get_manifest(rover):
+    url = f"https://api.nasa.gov/mars-photos/api/v1/manifests/{rover}?api_key={API_KEY}"
+    response = requests.get(url)
+    return response.json()["photo_manifest"]
+
+@st.cache_data
+def get_random_banner_photo():
+    manifest = get_manifest(ROVER)
+    max_sol = manifest["max_sol"]
+    attempts = 0
+    while attempts < 5:
+        random_sol = random.randint(0, max_sol)
+        url = f"https://api.nasa.gov/mars-photos/api/v1/rovers/{ROVER}/photos"
+        params = {"sol": random_sol, "api_key": API_KEY}
+        response = requests.get(url, params=params)
+        photos = response.json().get("photos", [])
+        if photos:
+            return random.choice(photos)["img_src"]
+        attempts += 1
+    return None
+
+# ----------------------------------
+# DISPLAY RANDOM BANNER IMAGE
+# ----------------------------------
+banner_url = get_random_banner_photo()
+if banner_url:
+    st.image(banner_url, caption="📸 Random Image from Curiosity Rover", use_container_width=True)
+else:
+    st.warning("No banner image could be loaded. Try refreshing or check API limits.")
+
+# ----------------------------------
+# TITLE & INTRO
+# ----------------------------------
 st.title("🚀 Mars Rover Photo Explorer")
+
 st.markdown("""
-Welcome to the **Mars Rover Explorer**, a web app that lets you explore high-resolution photos taken by NASA's rovers on the surface of Mars.
+Welcome to the **Mars Rover Explorer**, where you can view real images taken by NASA's rovers on the surface of Mars.  
+The app is powered by [NASA's Mars Rover API](https://api.nasa.gov/) and displays live data with interactive filtering.
 
-Use the sidebar to explore images from:
-- 🛸 **Curiosity**
-- 🛠️ **Opportunity**
-- 🔧 **Spirit**
-- 🧪 **Perseverance**
+### 🔍 What You Can Do:
+- Select one of NASA’s four Mars rovers from the sidebar
+- Search photos by **Martian Sol** or **Earth Date**
+- Filter by **camera**
+- View **full-resolution images**
+- Learn about each rover’s **mission status** and stats
 
-Each page allows you to:
-- Search by **Martian Sol** or **Earth Date**
-- Filter by **Rover Camera**
-- View full-resolution images
-- Learn about each rover's **mission status** and stats
-
-This project uses real-time data from the official NASA Mars Rover Photos API.
+> Use the navigation in the sidebar to get started!
 """)
 
-# Spacer
 st.markdown("---")
 
-# Optional: Link to NASA API
-col1, col2 = st.columns([1, 5])
+# Optional: NASA + Streamlit attribution
+col1, col2 = st.columns([1, 4])
 with col1:
-    st.image("https://www.nasa.gov/sites/default/files/thumbnails/image/nasa-logo-web-rgb.png", width=60)
+    st.image("https://www.nasa.gov/sites/default/files/thumbnails/image/nasa-logo-web-rgb.png", width=70)
 with col2:
     st.markdown("""
-**Powered by [NASA's Open APIs](https://api.nasa.gov/)**  
-Built with ❤️ using [Streamlit](https://streamlit.io)
+**Powered by NASA Open APIs**  
+Made with ❤️ using [Streamlit](https://streamlit.io)
 """)

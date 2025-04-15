@@ -7,6 +7,10 @@ This Streamlit app lets you explore real images taken by NASA's Mars Rovers: Cur
 - Filter by available cameras
 - Multi-page layout (one per rover)
 
+### Live App
+🔗 [Launch Mars Rover Explorer](https://mars-rover-app-beeabctsgqv5seegv3lmba.streamlit.app/)
+
+
 ### Run locally
 
 ```bash
