@@ -46,7 +46,22 @@ st.sidebar.header("🔍 Filter Options")
 
 query_type = st.sidebar.radio("Search by:", ["Martian Sol", "Earth Date"])
 camera = st.sidebar.selectbox("Camera", ["ALL", "FHAZ", "RHAZ", "MAST", "CHEMCAM", "MAHLI", "MARDI", "NAVCAM"])
-page = st.sidebar.number_input("Page number", min_value=1, value=1)
+# Initialize page number in session state
+if "curiosity_page" not in st.session_state:
+    st.session_state.curiosity_page = 1
+
+# Page controls
+with st.sidebar:
+    st.markdown("### 📖 Pagination")
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button("⬅️ Previous") and st.session_state.curiosity_page > 1:
+            st.session_state.curiosity_page -= 1
+    with col2:
+        if st.button("Next ➡️"):
+            st.session_state.curiosity_page += 1
+
+    st.markdown(f"**Current Page:** {st.session_state.curiosity_page}")
 
 sol = None
 earth_date = None
