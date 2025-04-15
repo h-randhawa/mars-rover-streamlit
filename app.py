@@ -2,7 +2,8 @@ import streamlit as st
 
 st.set_page_config(page_title="Mars Rover Explorer", layout="wide")
 
-st.image("https://mars.nasa.gov/layout/mars2020/images/PIA25681-FigureA-web.jpg", use_container_width=True)
+# Banner image but I cannot get it to display correctly
+# st.image("https://mars.nasa.gov/layout/mars2020/images/PIA25681-FigureA-web.jpg", use_container_width=True)
 
 st.title("🚀 Mars Rover Photo Explorer")
 st.markdown("""
