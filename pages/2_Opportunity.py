@@ -28,9 +28,8 @@ def get_photos(rover, sol=None, earth_date=None, camera=None, page=1):
         params["sol"] = sol
     if earth_date is not None:
         params["earth_date"] = earth_date
-    
-    #if camera != "ALL":
-    #    params["camera"] = camera
+    if camera != "ALL":
+        params["camera"] = camera
     response = requests.get(url, params=params)
     return response.json()["photos"]
 
@@ -47,14 +46,11 @@ total_photos = manifest['total_photos']
 st.sidebar.header("🔍 Filter Options")
 
 query_type = st.sidebar.radio("Search by:", ["Martian Sol", "Earth Date"])
-# ✅ Correct camera list for Opportunity
 camera = st.sidebar.selectbox("Camera", ["ALL", "FHAZ", "RHAZ", "NAVCAM", "PANCAM", "MINITES"])
 
-# Initialize page number in session state
 if "opportunity_page" not in st.session_state:
     st.session_state.opportunity_page = 1
 
-# Page controls
 with st.sidebar:
     st.markdown("### 📖 Pagination")
     col1, col2 = st.columns([1, 1])
@@ -71,13 +67,15 @@ with st.sidebar:
 sol = None
 earth_date = None
 
+# ✅ Use working default Sol and date
 if query_type == "Martian Sol":
-    # ✅ Improved default sol value (Sol 100 is more likely to have photos)
-    sol = st.sidebar.slider("Martian Sol", 0, max_sol, 100)
+    sol = st.sidebar.slider("Martian Sol", 0, max_sol, 30)
 else:
     min_date = datetime.strptime(landing_date, "%Y-%m-%d").date()
     max_dt = datetime.strptime(max_date, "%Y-%m-%d").date()
-    earth_date = st.sidebar.date_input("Earth Date", value=min_date, min_value=min_date, max_value=max_dt)
+    earth_date = st.sidebar.date_input("Earth Date", value=datetime(2004, 2, 1).date(), min_value=min_date, max_value=max_dt)
+
+st.sidebar.code(f"Sol: {sol} | Earth Date: {earth_date} | Camera: {camera} | Page: {st.session_state.opportunity_page}")
 
 # ---------------- FETCH & DISPLAY PHOTOS ----------------
 photos = get_photos(
@@ -100,9 +98,8 @@ if photos:
                 use_container_width=True
             )
 else:
-    st.info("No photos found. Try a different date, sol, or camera.")
+    st.info("No photos found. Try a different Sol, date, or camera.")
 
-# ---------------- MISSION INFO ----------------
 with st.expander("ℹ️ Mission Details"):
     st.markdown(f"""
     **Rover Name:** Opportunity  
