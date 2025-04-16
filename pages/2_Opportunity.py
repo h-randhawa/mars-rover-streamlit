@@ -15,7 +15,11 @@ ROVER = "opportunity"
 def get_manifest(rover):
     url = f"https://api.nasa.gov/mars-photos/api/v1/manifests/{rover}?api_key={API_KEY}"
     response = requests.get(url)
+    if response.status_code != 200:
+        st.error(f"Failed to fetch manifest. Status code: {response.status_code}")
+        st.stop()
     return response.json()["photo_manifest"]
+
 
 @st.cache_data(show_spinner=False)
 def get_photos(rover, sol=None, earth_date=None, camera=None, page=1):
