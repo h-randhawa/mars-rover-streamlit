@@ -1,3 +1,6 @@
+![Build](https://github.com/h-randhawa/mars-rover-streamlit/actions/workflows/deploy.yml/badge.svg)
+[![Docker](https://img.shields.io/badge/Docker-Image-blue)](https://github.com/h-randhawa/mars-rover-streamlit/pkgs/container/mars-rover-streamlit)
+
 # 🚀 Mars Rover Explorer
 
 A Streamlit web app that lets you explore real imagery sent from NASA’s Curiosity and Perseverance rovers on Mars. Get the latest photos, browse random sols, filter by camera, and learn cool facts about Mars — all from a beautiful interactive interface.
