@@ -51,3 +51,10 @@ streamlit run app.py
 ```
 ### 3. Live App
 🔗 [Launch Mars Rover Explorer](https://mars-rover-app-beeabctsgqv5seegv3lmba.streamlit.app/)
+
+### 4. Docker Image
+- Pull the docker image and run inside the container:
+  ```bash
+  docker pull ghcr.io/h-randhawa/mars-rover-streamlit:latest
+  docker run -p 8501:8501 ghcr.io/h-randhawa/mars-rover-streamlit:latest
+
