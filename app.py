@@ -1,83 +1,149 @@
 import streamlit as st
 import requests
 import random
+import pandas as pd
+from datetime import datetime
 
-# ----------------------------------
-# SET PAGE CONFIG FIRST
-# ----------------------------------
-st.set_page_config(
-    page_title="Mars Rover Explorer",
-    layout="wide",
-    page_icon="🚀"
-)
+# ---------------- CONFIG ----------------
+st.set_page_config(page_title="Mars Rover Explorer", layout="wide")
+st.title("🚀 Welcome to the Mars Rover Explorer")
+st.caption("Explore stunning images, live stats, and facts from NASA’s active Mars rover missions.")
 
-# ----------------------------------
-# API KEY FROM SECRETS
-# ----------------------------------
-API_KEY = st.secrets["api"]["nasa_key"] if "api" in st.secrets else "DEMO_KEY"
-ROVER = "curiosity"
+with st.container():
+    st.markdown("## Welcome to the Mars Rover Explorer App!")
 
-# ----------------------------------
-# API CALLS
-# ----------------------------------
-@st.cache_data
+    st.markdown("""
+    This interactive dashboard lets you explore the latest imagery, data, and fun facts from NASA’s active Mars rover missions — **Curiosity** and **Perseverance**.
+
+    Here's what you can do:
+    - 🖼️ **View random photos** taken by Mars rovers from the surface of the Red Planet  
+    - 📊 **Compare rover stats**, including launch dates, number of sols, and photos taken  
+    - 🔁 **Toggle between daily quotes and fun Mars facts** to stay inspired or informed  
+    - 🌡️ **Check real weather data** from the InSight lander, including temperature and wind 
+
+    Use the sidebar to navigate through different sections of the app.  
+    Whether you're here for science, inspiration, or fun — you're in the right place.
+    """)
+
+API_KEY = st.secrets["api"]["nasa_key"]
+ROVERS = ["curiosity", "perseverance"]
+
+# ---------------- QUOTE OR FUN FACT W/ SOURCES ----------------
+quotes = [
+    {
+        "text": "“Mars is there, waiting to be reached.”",
+        "author": "Buzz Aldrin",
+        "desc": "Apollo 11 astronaut and the second human to walk on the Moon.",
+        "source": "https://www.nasa.gov/sites/default/files/atoms/files/buzz_aldrin_biography.pdf"
+    },
+    {
+        "text": "“Curiosity is the essence of our existence.”",
+        "author": "Gene Cernan",
+        "desc": "Commander of Apollo 17, the last person to walk on the Moon.",
+        "source": "https://www.nasa.gov/astronautprofiles/cernan/"
+    },
+    {
+        "text": "“Somewhere, something incredible is waiting to be known.”",
+        "author": "Carl Sagan",
+        "desc": "Astronomer, astrophysicist, and host of the original *Cosmos* series.",
+        "source": "https://www.carlsagan.com/"
+    }
+]
+
+fun_facts = [
+    {
+        "fact": "🔎 The Curiosity rover has traveled over 18 miles across Gale Crater.",
+        "source": "https://mars.nasa.gov/msl/mission/overview/"
+    },
+    {
+        "fact": "🧪 Perseverance is the first rover to collect and cache samples of Martian rock and soil.",
+        "source": "https://mars.nasa.gov/mars2020/"
+    },
+    {
+        "fact": "🚁 Ingenuity became the first aircraft to fly on another planet!",
+        "source": "https://mars.nasa.gov/technology/helicopter/"
+    },
+    {
+        "fact": "📡 Curiosity and Perseverance communicate with Earth via orbiters like MRO and MAVEN.",
+        "source": "https://mars.nasa.gov/faq/#communicating"
+    },
+    {
+        "fact": "⚡ Perseverance uses a nuclear power source called an MMRTG.",
+        "source": "https://mars.nasa.gov/mars2020/spacecraft/rover/power/"
+    }
+]
+
+st.sidebar.markdown("🧠 **Inspire or Inform?**")
+display_mode = st.sidebar.radio("Show me a...", ["Quote", "Fun Fact"])
+
+# Reset if switching modes
+if "last_display_mode" not in st.session_state:
+    st.session_state.last_display_mode = display_mode
+
+if display_mode != st.session_state.last_display_mode:
+    st.session_state.quote_or_fact = None
+    st.session_state.refresh_quote_fact = True
+    st.session_state.last_display_mode = display_mode
+
+# Set up session state
+if "quote_or_fact" not in st.session_state:
+    st.session_state.quote_or_fact = None
+if "refresh_quote_fact" not in st.session_state:
+    st.session_state.refresh_quote_fact = True  # Load one on first render
+
+def get_new_entry():
+    if display_mode == "Quote":
+        st.session_state.quote_or_fact = random.choice(quotes)
+    else:
+        st.session_state.quote_or_fact = random.choice(fun_facts)
+    st.session_state.refresh_quote_fact = False
+
+# Reroll button
+if st.button("🔁 Get Another Quote or Fact"):
+    st.session_state.refresh_quote_fact = True
+
+# Generate if needed
+if st.session_state.quote_or_fact is None or st.session_state.refresh_quote_fact:
+    get_new_entry()
+
+# Display result
+if display_mode == "Quote":
+    selected = st.session_state.quote_or_fact
+    st.markdown(f"> 💬 *{selected['text']}*  \n**— {selected['author']}**")
+    st.caption(f"**{selected['author']}**: {selected['desc']}  \n🔗 [Source]({selected['source']})")
+else:
+    selected = st.session_state.quote_or_fact
+    st.markdown(f"> 🤓 {selected['fact']}")
+    st.caption(f"🔗 [Source]({selected['source']})")
+
+
+# ---------------- COUNTDOWN TO NEXT OPPOSITION ----------------
+#next_opposition = datetime(2026, 12, 19)
+#today = datetime.now()
+#days_left = (next_opposition - today).days
+#st.markdown(f"🪐 **Days until next Mars–Earth opposition:** `{days_left}` days")
+
+# ---------------- MISSION STATS SUMMARY ----------------
+@st.cache_data(show_spinner=False)
 def get_manifest(rover):
     url = f"https://api.nasa.gov/mars-photos/api/v1/manifests/{rover}?api_key={API_KEY}"
     response = requests.get(url)
     return response.json()["photo_manifest"]
 
-@st.cache_data
-def get_random_banner_photo():
-    manifest = get_manifest(ROVER)
-    max_sol = manifest["max_sol"]
-    attempts = 0
-    while attempts < 5:
-        random_sol = random.randint(0, max_sol)
-        url = f"https://api.nasa.gov/mars-photos/api/v1/rovers/{ROVER}/photos"
-        params = {"sol": random_sol, "api_key": API_KEY}
-        response = requests.get(url, params=params)
-        photos = response.json().get("photos", [])
-        if photos:
-            return random.choice(photos)["img_src"]
-        attempts += 1
-    return None
+st.subheader("📊 Mission Stats Summary")
 
-# ----------------------------------
-# DISPLAY RANDOM BANNER IMAGE
-# ----------------------------------
-banner_url = get_random_banner_photo()
-if banner_url:
-    st.image(banner_url, caption="📸 Random Image from Curiosity Rover", use_container_width=True)
-else:
-    st.warning("No banner image could be loaded. Try refreshing or check API limits.")
+summary_data = []
+for rover in ROVERS:
+    manifest = get_manifest(rover)
+    summary_data.append({
+        "Rover": manifest["name"],
+        "Launch Date": manifest["launch_date"],
+        "Landing Date": manifest["landing_date"],
+        "Status": manifest["status"].capitalize(),
+        "Max Sol": manifest["max_sol"],
+        "Max Earth Date": manifest["max_date"],
+        "Total Photos": manifest["total_photos"]
+    })
 
-# ----------------------------------
-# TITLE & INTRO
-# ----------------------------------
-st.title("🚀 Mars Rover Photo Explorer")
-
-st.markdown("""
-Welcome to the **Mars Rover Explorer**, where you can view real images taken by NASA's rovers on the surface of Mars.  
-The app is powered by [NASA's Mars Rover API](https://api.nasa.gov/) and displays live data with interactive filtering.
-
-### 🔍 What You Can Do:
-- Select one of NASA’s four Mars rovers from the sidebar
-- Search photos by **Martian Sol** or **Earth Date**
-- Filter by **camera**
-- View **full-resolution images**
-- Learn about each rover’s **mission status** and stats
-
-> Use the navigation in the sidebar to get started!
-""")
-
-st.markdown("---")
-
-# Optional: NASA + Streamlit attribution
-col1, col2 = st.columns([1, 4])
-with col1:
-    st.image("https://www.nasa.gov/sites/default/files/thumbnails/image/nasa-logo-web-rgb.png", width=70)
-with col2:
-    st.markdown("""
-**Powered by NASA Open APIs**  
-Made with ❤️ using [Streamlit](https://streamlit.io)
-""")
+df_summary = pd.DataFrame(summary_data)
+st.dataframe(df_summary, use_container_width=True)

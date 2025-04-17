@@ -47,7 +47,6 @@ st.sidebar.header("🔍 Filter Options")
 
 query_type = st.sidebar.radio("Search by:", ["Martian Sol", "Earth Date"])
 
-# ✅ Updated camera list for Perseverance
 camera = st.sidebar.selectbox("Camera", [
     "ALL", "EDL_RUCAM", "EDL_DDCAM", "EDL_PUCAM1", "EDL_PUCAM2", "NAVCAM_LEFT", "NAVCAM_RIGHT",
     "MCZ_RIGHT", "MCZ_LEFT", "FRONT_HAZCAM_LEFT", "FRONT_HAZCAM_RIGHT",
@@ -81,9 +80,6 @@ else:
     min_date = datetime.strptime(landing_date, "%Y-%m-%d").date()
     max_dt = datetime.strptime(max_date, "%Y-%m-%d").date()
     earth_date = st.sidebar.date_input("Earth Date", value=min_date, min_value=min_date, max_value=max_dt)
-
-# Debug: Show API call info
-st.sidebar.code(f"Sol: {sol} | Earth Date: {earth_date} | Camera: {camera} | Page: {st.session_state.perseverance_page}")
 
 # ---------------- FETCH & DISPLAY PHOTOS ----------------
 photos = get_photos(
