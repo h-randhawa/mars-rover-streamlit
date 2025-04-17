@@ -28,4 +28,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ghcr.io/${{ h-randhawa/mars-rover-streamlit }}:latest
+          tags: ghcr.io/h-randhawa/mars-rover-streamlit:latest
