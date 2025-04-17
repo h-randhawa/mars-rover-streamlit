@@ -4,7 +4,7 @@ A Streamlit web app that lets you explore real imagery sent from NASA’s Curios
 
 ---
 
-## 🌟 Features
+## Features
 
 - **Latest Photos**
   - Instantly view the most recent images from both Curiosity and Perseverance.
@@ -18,7 +18,7 @@ A Streamlit web app that lets you explore real imagery sent from NASA’s Curios
 - **Daily Quote or Mars Fun Fact**
   - Toggle between motivational space quotes and interesting Mars trivia with a single click.
 
-- 📊 **Rover Mission Summary**
+- **Rover Mission Summary**
   - View a stats table comparing launch date, landing date, latest photo info, and total images captured.
 
 ---
