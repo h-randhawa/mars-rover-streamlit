@@ -1,4 +1,5 @@
-![Build](https://github.com/h-randhawa/mars-rover-streamlit/actions/workflows/deploy.yml/badge.svg)
+![Build](https://github.com/h-randhawa/mars-rover-streamlit/actions/workflows/test.yml/badge.svg)
+![Build](https://github.com/h-randhawa/mars-rover-streamlit/actions/workflows/docker.yml/badge.svg)
 [![Docker](https://img.shields.io/badge/Docker-Image-blue)](https://github.com/h-randhawa/mars-rover-streamlit/pkgs/container/mars-rover-streamlit)
 
 # 🚀 Mars Rover Explorer
