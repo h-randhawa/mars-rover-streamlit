@@ -19,7 +19,6 @@ with st.container():
     - 🖼️ **View random photos** taken by Mars rovers from the surface of the Red Planet  
     - 📊 **Compare rover stats**, including launch dates, number of sols, and photos taken  
     - 🔁 **Toggle between daily quotes and fun Mars facts** to stay inspired or informed  
-    - 🌡️ **Check real weather data** from the InSight lander, including temperature and wind 
 
     Use the sidebar to navigate through different sections of the app.  
     Whether you're here for science, inspiration, or fun — you're in the right place.
