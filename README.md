@@ -58,3 +58,6 @@ streamlit run app.py
   docker pull ghcr.io/h-randhawa/mars-rover-streamlit:latest
   docker run -p 8501:8501 ghcr.io/h-randhawa/mars-rover-streamlit:latest
 
+- If you're running from Docker, mount the secrets file like this (windows):
+```
+docker run -p 8501:8501 -v "C:\Users\YourName\path\to\.streamlit\secrets.toml:/app/.streamlit/secrets.toml" ghcr.io/h-randhawa/mars-rover-streamlit:latest
