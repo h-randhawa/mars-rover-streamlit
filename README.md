@@ -4,7 +4,7 @@ A Streamlit web app that lets you explore real imagery sent from NASA’s Curios
 
 ---
 
-## 🌟 Features
+## Features
 
 - **Latest Photos**
   - Instantly view the most recent images from both Curiosity and Perseverance.
