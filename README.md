@@ -39,12 +39,12 @@ A Streamlit web app that lets you explore real imagery sent from NASA’s Curios
 ```bash
 git clone https://github.com/your-username/mars-rover-streamlit.git
 cd mars-rover-streamlit
-
+```
 ### 2. Run locally
 
 ```bash
 pip install -r requirements.txt
 streamlit run app.py
-
+```
 ### 3. Live App
 🔗 [Launch Mars Rover Explorer](https://mars-rover-app-beeabctsgqv5seegv3lmba.streamlit.app/)
