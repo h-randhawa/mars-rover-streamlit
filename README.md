@@ -41,7 +41,7 @@ A Streamlit web app that lets you explore real imagery sent from NASA’s Curios
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-username/mars-rover-streamlit.git
+git clone https://github.com/h-randhawa/mars-rover-streamlit.git
 cd mars-rover-streamlit
 ```
 ### 2. Run locally
